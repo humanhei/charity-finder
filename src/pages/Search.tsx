@@ -14,8 +14,8 @@ function Search() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const url = `${apiUrl}/${searchQuery}?apiKey=${apiKey}`;
-        console.log(url)
+        const url = `${apiUrl}${searchQuery}?apiKey=${apiKey}`;
+        console.log(url);
         const result = await fetch(url);
         const body = await result.json();
         setData(body.nonprofits);
