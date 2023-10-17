@@ -1,22 +1,31 @@
 import { useSearchParams } from 'react-router-dom'
 import { charityData } from "../interface/charityData.interface";
 import CharityListComponent from "../components/CharityListComponent";
+import { useEffect, useState, } from 'react';
 const apiUrl = import.meta.env.VITE_API_URL;
 const apiKey = import.meta.env.VITE_API_KEY;
 
-interface SearchDisplayProps {
-  isLoading: boolean
-  data: charityData[];
-  onHandleUrl: (url: string) => void;
-}
-
-function Search({ isLoading, data, onHandleUrl }: SearchDisplayProps) {
+function Search() {
+  const [data, setData] = useState(Array<charityData>)
+  const [isLoading, setIsLoading] = useState(true)
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('searchQuery');
-  if (isLoading) {
-    const url = `${apiUrl}/${searchQuery}?apiKey=${apiKey}`;
-    onHandleUrl(url);
-  }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const url = `${apiUrl}/${searchQuery}?apiKey=${apiKey}`;
+        const result = await fetch(url);
+        const body = await result.json();
+        setData(body.nonprofits);
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData()
+  }, [searchQuery]);
 
   return (
     <div id="charity-list-page">
